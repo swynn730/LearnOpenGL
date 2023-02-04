@@ -1,4 +1,6 @@
-﻿  Main.cpp
+﻿  glad.c
+  Main.cpp
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
-C:\OpenGL\ThirdPartyLibs\Includes\glad\glad.h(32): message : see previous definition of 'APIENTRY'
+C:\Users\Shalia\source\repos\LearnOpenGL\OpenGL\ThirdPartyLibs\Includes\glad\glad.h(32): message : see previous definition of 'APIENTRY'
+  LINK : C:\Users\Shalia\source\repos\LearnOpenGL\x64\Debug\LearnOpenGL.exe not found or not built by the last incremental link; performing full link
   LearnOpenGL.vcxproj -> C:\Users\Shalia\source\repos\LearnOpenGL\x64\Debug\LearnOpenGL.exe
