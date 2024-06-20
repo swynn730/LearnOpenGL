@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <Windows.h>
+#include "../LearnOpenGL/shader_s.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -9,20 +10,6 @@ void processInput(GLFWwindow* window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-
-const char* vertexShaderSource = "#version 330 core\n"
-	"layout(location = 0) in vec3 aPos;\n"
-	"void main()\n"
-	"{\n"
-	"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"}\0";
-
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\0";
 
 int main() {
 	// Run this once and it fixes the problem of the console window showing when running the application
@@ -55,72 +42,46 @@ int main() {
 
 	// build and compile our shader program
 
-	// vertex shader
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	int success;
-	char infoLog[512];
-
-	// check for vertex shader compile errors
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	//fragment shader
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	// check for fragment shader compile errors
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	// link shaders (vertex and fragment)
-	unsigned int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	// check for linked shader compile errors
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-	}
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	Shader shaderProgram_00("simple_vertex.vs", "simple_fragment_00.fs");
+	Shader shaderProgram_01("simple_vertex.vs", "simple_fragment_01.fs");
 
 	// set up vertex data and buffer(s) and configure vertex attributes
-	float vertices[] = {
-	-0.5f, -0.5f, 0.5f,	// left
-	0.5f, -0.5f, 0.0f,	// right
-	0.0f, 0.5f, 0.0f	// top
+	float triangle_00_vertices[] = {
+		// first triangle (left)
+		-1.0f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f,	// left
+		 0.0f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f,	// right
+		-0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f	// top
 	};
 
-	unsigned int VBO, VAO;
-	// create, bind and set vertex buffer(s)
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	float triangle_01_vertices[] = {
+		// second triangle (right)
+		0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 	// left
+		1.0f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,	// right
+		0.5f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f	// top
+	};
 
-	// create, bind, configure and enable vertex attributes
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	unsigned int triangle_00_VAO, triangle_01_VAO, triangle_00_VBO, triangle_01_VBO;
+
+	glGenVertexArrays(1, &triangle_00_VAO);
+	glGenVertexArrays(1, &triangle_01_VAO);
+	glGenBuffers(1, &triangle_00_VBO);
+	glGenBuffers(1, &triangle_01_VBO);
+
+	glBindVertexArray(triangle_00_VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, triangle_00_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_00_vertices), triangle_00_vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(triangle_01_VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, triangle_01_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_01_vertices), triangle_01_vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	// uncomment this call to draw in wireframe polygons.
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -135,11 +96,17 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// draw our first triangle
-		glUseProgram(shaderProgram);
-		// seeing as we only have a single VAO there's no need to bind it 
-		// every time, but we'll do so to keep things a bit more organized
-		glBindVertexArray(VAO);
+		float timeValue = glfwGetTime();
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		shaderProgram_01.use();
+		shaderProgram_01.setFloat("ourColor", greenValue);
+		glBindVertexArray(triangle_00_VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		float horizontalOffsetValue = timeValue * 0.5;
+		shaderProgram_00.use();
+		shaderProgram_00.setFloat("horizontalOffset", horizontalOffsetValue);
+		glBindVertexArray(triangle_01_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// GLFW: swap buffers and poll IO events
@@ -148,9 +115,10 @@ int main() {
 	}
 
 	// (optional) de-allocate all resources once they've outlived their purpose
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteProgram(shaderProgram);
+	glDeleteVertexArrays(1, &triangle_00_VAO);
+	glDeleteVertexArrays(1, &triangle_01_VAO);
+	glDeleteBuffers(1, &triangle_00_VBO);
+	glDeleteBuffers(1, &triangle_01_VBO);
 
 	// GLFW: terminate, clearing all previously allocated resources
 	glfwTerminate();

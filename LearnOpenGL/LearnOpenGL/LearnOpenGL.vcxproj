@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Shalia\source\repos\LearnOpenGL\OpenGL\ThirdPartyLibs\Includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Shalia\source\repos\LearnOpenGL\OpenGL\ThirdPartyLibs\Libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\OpenGL\ThirdPartyLibs\Includes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\OpenGL\ThirdPartyLibs\Libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -144,6 +144,14 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="simple_fragment_00.fs" />
+    <None Include="simple_fragment_01.fs" />
+    <None Include="simple_vertex.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader_s.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

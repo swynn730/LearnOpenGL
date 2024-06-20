@@ -22,4 +22,20 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="simple_fragment_00.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="simple_vertex.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="simple_fragment_01.fs">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader_s.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
