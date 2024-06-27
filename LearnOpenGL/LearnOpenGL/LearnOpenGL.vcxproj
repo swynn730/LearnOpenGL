@@ -144,14 +144,23 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="simple_fragment_00.fs" />
     <None Include="simple_fragment_01.fs" />
     <None Include="simple_vertex.vs" />
+    <None Include="textured_rectangle_00.fs" />
+    <None Include="textured_rectangle_00.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader_s.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Textures\awesomeface.png" />
+    <Image Include="Resources\Textures\container.jpg" />
+    <Image Include="Resources\Textures\judge_judy.jpg" />
+    <Image Include="Resources\Textures\wall.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
