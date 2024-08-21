@@ -41,6 +41,9 @@
     <None Include="textured_rectangle_00.vs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="textured_rectangle_01.vs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader_s.h">

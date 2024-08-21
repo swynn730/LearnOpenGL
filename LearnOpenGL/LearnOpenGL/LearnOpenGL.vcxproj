@@ -152,6 +152,7 @@
     <None Include="simple_vertex.vs" />
     <None Include="textured_rectangle_00.fs" />
     <None Include="textured_rectangle_00.vs" />
+    <None Include="textured_rectangle_01.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader_s.h" />

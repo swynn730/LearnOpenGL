@@ -3,6 +3,9 @@
 #include <stb_image/stb_image.h>
 #include <Windows.h>
 #include "../LearnOpenGL/shader_s.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 
@@ -28,13 +31,13 @@ int main() {
 
 	// GLFW: window creation
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-	if (window == NULL) 
+	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
-	
+
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -50,6 +53,7 @@ int main() {
 	Shader shaderProgram_00("simple_vertex.vs", "simple_fragment_00.fs");
 	Shader shaderProgram_01("simple_vertex.vs", "simple_fragment_01.fs");
 	Shader shaderProgram_02("textured_rectangle_00.vs", "textured_rectangle_00.fs");
+	Shader shaderProgram_03("textured_rectangle_01.vs", "textured_rectangle_00.fs");
 
 	// set up vertex data and buffer(s) and configure vertex attributes
 	float triangle_00_vertices[] = {
@@ -68,10 +72,10 @@ int main() {
 
 	float rectangle_00_vertices[] = {
 		// positions          // colors           // texture coords
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // bottom right
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
 		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // top left 
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 	};
 
 	unsigned int rectangle_00_indices[] = {
@@ -79,15 +83,21 @@ int main() {
 		1, 2, 3  // second triangle
 	};
 
-	unsigned int triangle_00_VAO, triangle_01_VAO, rectangle_00_VAO, triangle_00_VBO, triangle_01_VBO, rectangle_00_VBO, rectangle_00_EBO, texture_00, texture_01;
+	unsigned int triangle_00_VAO, triangle_01_VAO, rectangle_00_VAO;
+	unsigned int triangle_00_VBO, triangle_01_VBO, rectangle_00_VBO;
+	unsigned int rectangle_00_EBO;
+	unsigned int texture_00, texture_01;
 
 	glGenVertexArrays(1, &triangle_00_VAO);
 	glGenVertexArrays(1, &triangle_01_VAO);
 	glGenVertexArrays(1, &rectangle_00_VAO);
+
 	glGenBuffers(1, &triangle_00_VBO);
 	glGenBuffers(1, &triangle_01_VBO);
 	glGenBuffers(1, &rectangle_00_VBO);
+
 	glGenBuffers(1, &rectangle_00_EBO);
+
 	glGenTextures(1, &texture_00);
 	glGenTextures(1, &texture_01);
 
@@ -104,7 +114,7 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_01_vertices), triangle_01_vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(rectangle_00_VAO);
@@ -112,6 +122,7 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle_00_vertices), rectangle_00_vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectangle_00_EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectangle_00_indices), rectangle_00_indices, GL_STATIC_DRAW);
+
 	// Position attribute.
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -124,6 +135,7 @@ int main() {
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_00);
+
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
@@ -161,7 +173,7 @@ int main() {
 
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -174,6 +186,10 @@ int main() {
 	shaderProgram_02.use(); // don't forget to activate the shader before setting uniforms!  
 	glUniform1i(glGetUniformLocation(shaderProgram_02.ID, "texture_00"), 0); // set it manually
 	shaderProgram_02.setInt("texture_01", 1); // or with shader class
+
+	shaderProgram_03.use(); // don't forget to activate the shader before setting uniforms!  
+	glUniform1i(glGetUniformLocation(shaderProgram_03.ID, "texture_00"), 0); // set it manually
+	shaderProgram_03.setInt("texture_00", 1); // or with shader class
 
 	// uncomment this call to draw in wireframe polygons.
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -195,15 +211,27 @@ int main() {
 		glBindVertexArray(triangle_00_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		float horizontalOffsetValue = timeValue * 0.5;
+		float horizontalOffsetValue = timeValue * 0.1;
 		shaderProgram_00.use();
 		shaderProgram_00.setFloat("horizontalOffset", horizontalOffsetValue);
 		glBindVertexArray(triangle_01_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		shaderProgram_02.use();
+		glm::mat4 rectangle_00_trans = glm::mat4(1.0f);
+		rectangle_00_trans = glm::translate(rectangle_00_trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		rectangle_00_trans = glm::rotate(rectangle_00_trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram_02.ID, "transform"), 1, GL_FALSE, glm::value_ptr(rectangle_00_trans));
 		shaderProgram_02.setFloat("mixerValue", mixerValue);
+		shaderProgram_02.setFloat("texCoordScale", 2.0f);
 		glBindVertexArray(rectangle_00_VAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		shaderProgram_03.use();
+		glm::mat4 rectangle_01_trans = glm::mat4(1.0f);
+		rectangle_01_trans = glm::translate(rectangle_01_trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+		rectangle_01_trans = glm::scale(rectangle_01_trans, abs(sin((float)glfwGetTime() * 0.5f) * glm::vec3(1.0f, 1.0f, 1.0f)));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram_03.ID, "transform"), 1, GL_FALSE, glm::value_ptr(rectangle_01_trans));
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		// GLFW: swap buffers and poll IO events
@@ -215,9 +243,12 @@ int main() {
 	glDeleteVertexArrays(1, &triangle_00_VAO);
 	glDeleteVertexArrays(1, &triangle_01_VAO);
 	glDeleteVertexArrays(1, &rectangle_00_VAO);
+
 	glDeleteBuffers(1, &triangle_00_VBO);
 	glDeleteBuffers(1, &triangle_01_VBO);
 	glDeleteBuffers(1, &rectangle_00_VBO);
+
+	glDeleteBuffers(1, &rectangle_00_EBO);
 
 	// GLFW: terminate, clearing all previously allocated resources
 	glfwTerminate();
