@@ -155,6 +155,7 @@
     <None Include="textured_rectangle_01.vs" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="shader_s.h" />
   </ItemGroup>
   <ItemGroup>

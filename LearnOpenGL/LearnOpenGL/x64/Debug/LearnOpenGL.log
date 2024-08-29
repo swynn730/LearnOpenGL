@@ -1,6 +1,14 @@
 ﻿  Main.cpp
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
 C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\OpenGL\ThirdPartyLibs\Includes\glad\glad.h(32): message : see previous definition of 'APIENTRY'
-C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(267,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(274,31): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(289,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(299,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(306,31): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(470,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(471,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(475,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(476,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(477,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(478,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\LearnOpenGL\Main.cpp(512,28): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   LearnOpenGL.vcxproj -> C:\Users\swynn\Desktop\LearnOpenGL\LearnOpenGL\x64\Debug\LearnOpenGL.exe

@@ -49,6 +49,9 @@
     <ClInclude Include="shader_s.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Textures\judge_judy.jpg">
