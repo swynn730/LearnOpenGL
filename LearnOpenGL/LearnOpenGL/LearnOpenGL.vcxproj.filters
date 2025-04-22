@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\FragmentShaders">
+      <UniqueIdentifier>{fa73d08d-87f5-43f9-908e-51de529d1ba8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VertexShaders">
+      <UniqueIdentifier>{90439cfa-bac7-4bf7-bd8f-d5138e10a3e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Textures">
+      <UniqueIdentifier>{405b028c-881a-4c31-b17f-f3c877a5776b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -27,22 +36,34 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="simple_fragment_00.fs">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="simple_vertex.vs">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\FragmentShaders</Filter>
     </None>
     <None Include="simple_fragment_01.fs">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\FragmentShaders</Filter>
     </None>
     <None Include="textured_rectangle_00.fs">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\FragmentShaders</Filter>
+    </None>
+    <None Include="simple_vertex.vs">
+      <Filter>Source Files\VertexShaders</Filter>
     </None>
     <None Include="textured_rectangle_00.vs">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\VertexShaders</Filter>
     </None>
     <None Include="textured_rectangle_01.vs">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\VertexShaders</Filter>
+    </None>
+    <None Include="light_color.fs">
+      <Filter>Source Files\FragmentShaders</Filter>
+    </None>
+    <None Include="cube_color.fs">
+      <Filter>Source Files\FragmentShaders</Filter>
+    </None>
+    <None Include="light_color.vs">
+      <Filter>Source Files\VertexShaders</Filter>
+    </None>
+    <None Include="cube_color.vs">
+      <Filter>Source Files\VertexShaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -54,17 +75,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Resources\Textures\judge_judy.jpg">
-      <Filter>Source Files</Filter>
-    </Image>
-    <Image Include="Resources\Textures\wall.jpg">
-      <Filter>Source Files</Filter>
-    </Image>
     <Image Include="Resources\Textures\awesomeface.png">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Textures</Filter>
     </Image>
     <Image Include="Resources\Textures\container.jpg">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Textures</Filter>
+    </Image>
+    <Image Include="Resources\Textures\judge_judy.jpg">
+      <Filter>Source Files\Textures</Filter>
+    </Image>
+    <Image Include="Resources\Textures\wall.jpg">
+      <Filter>Source Files\Textures</Filter>
     </Image>
   </ItemGroup>
 </Project>

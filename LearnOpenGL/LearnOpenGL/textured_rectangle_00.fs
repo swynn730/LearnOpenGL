@@ -10,5 +10,5 @@ uniform float mixerValue;
 
 void main()
 {
-    FragColor = mix(texture(texture_00, TexCoord), texture(texture_01, 1.0f*vec2(-TexCoord.x, TexCoord.y)), mixerValue);
+    FragColor = mix(texture(texture_00, TexCoord), texture(texture_01, TexCoord), mixerValue);
 }
