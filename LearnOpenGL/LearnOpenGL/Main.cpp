@@ -21,10 +21,9 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // Camera.
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));	// Camera zoom
+
+// Mouse.
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -34,7 +33,7 @@ float deltaTime = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
 // Lighting.
-glm::vec3 lightPos(1.2f, 1.0, 2.0f);
+glm::vec3 lightPosition = glm::vec3(1.2f, 1.0, 2.0f);
 
 // Material.
 float mixerValue = 0.0;
@@ -64,63 +63,63 @@ int main() {
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	// GLFW: capture mouse input
+	// GLFW: capture mouse input.
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	// glad: load all OpenGL function pointers
+	// glad: load all OpenGL function pointers.
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
 
-	// build and compile our shader program
+	// Build and compile shader program(s).
 	Shader cubeColorShaderProgram("cube_color.vs", "cube_color.fs");
 	Shader lightCubeColorShaderProgram("light_color.vs", "light_color.fs");
 
 	float cube_00_vertices[] = {
-			// positions			// colors				// texture coords
-			-0.5f, -0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-			0.5f, -0.5f, -0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-			0.5f,  0.5f, -0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-			0.5f,  0.5f, -0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
+			// positions (x, y, z)	// normals (x, y, z)	// texture coords (u, v)
+			-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,		0.0f, 0.0f,
+			0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,		1.0f, 0.0f,
+			0.5f,  0.5f, -0.5f,		0.0f, 0.0f, -1.0f,		1.0f, 1.0f,
+			0.5f,  0.5f, -0.5f,		0.0f, 0.0f, -1.0f,		1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f,	0.0f, 0.0f, -1.0f,		0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, -1.0f,		0.0f, 0.0f,
 
-			-0.5f, -0.5f,  0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-			0.5f, -0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-			0.5f,  0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-			0.5f,  0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,	0.0f, 0.0f, 1.0f,		0.0f, 0.0f,
+			0.5f, -0.5f,  0.5f,		0.0f, 0.0f, 1.0f,		1.0f, 0.0f,
+			0.5f,  0.5f,  0.5f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,
+			0.5f,  0.5f,  0.5f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,	0.0f, 0.0f, 1.0f,		0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,	0.0f, 0.0f, 1.0f,		0.0f, 0.0f,
 
-			-0.5f,  0.5f,  0.5f,	1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,	1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,	-1.0f, 0.0f, 0.0f,		1.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,		1.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,		0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,	-1.0f, 0.0f, 0.0f,		0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,	-1.0f, 0.0f, 0.0f,		0.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,	-1.0f, 0.0f, 0.0f,		1.0f, 0.0f,
 
-			0.5f,  0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-			0.5f,  0.5f, -0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-			0.5f, -0.5f, -0.5f,		1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-			0.5f, -0.5f, -0.5f,		1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-			0.5f, -0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-			0.5f,  0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
+			0.5f,  0.5f,  0.5f,		1.0f, 0.0f, 0.0f,		1.0f, 0.0f,
+			0.5f,  0.5f, -0.5f,		1.0f, 0.0f, 0.0f,		1.0f, 1.0f,
+			0.5f, -0.5f, -0.5f,		1.0f, 0.0f, 0.0f,		0.0f, 1.0f,
+			0.5f, -0.5f, -0.5f,		1.0f, 0.0f, 0.0f,		0.0f, 1.0f,
+			0.5f, -0.5f,  0.5f,		1.0f, 0.0f, 0.0f,		0.0f, 0.0f,
+			0.5f,  0.5f,  0.5f,		1.0f, 0.0f, 0.0f,		1.0f, 0.0f,
 
-			-0.5f, -0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-			0.5f, -0.5f, -0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-			0.5f, -0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-			0.5f, -0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,	0.0f, -1.0f, 0.0f,		0.0f, 1.0f,
+			0.5f, -0.5f, -0.5f,		0.0f, -1.0f, 0.0f,		1.0f, 1.0f,
+			0.5f, -0.5f,  0.5f,		0.0f, -1.0f, 0.0f,		1.0f, 0.0f,
+			0.5f, -0.5f,  0.5f,		0.0f, -1.0f, 0.0f,		1.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,	0.0f, -1.0f, 0.0f,		0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,	0.0f, -1.0f, 0.0f,		0.0f, 1.0f,
 
-			-0.5f,  0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 1.0f,
-			0.5f,  0.5f, -0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,
-			0.5f,  0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-			0.5f,  0.5f,  0.5f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,	1.0f, 1.0f, 1.0f,		0.0f, 1.0f
+			-0.5f,  0.5f, -0.5f,	0.0f, 1.0f, 0.0f,		0.0f, 1.0f,
+			0.5f,  0.5f, -0.5f,		0.0f, 1.0f, 0.0f,		1.0f, 1.0f,
+			0.5f,  0.5f,  0.5f,		0.0f, 1.0f, 0.0f,		1.0f, 0.0f,
+			0.5f,  0.5f,  0.5f,		0.0f, 1.0f, 0.0f,		1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,	0.0f, 1.0f, 0.0f,		0.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,	0.0f, 1.0f, 0.0f,		0.0f, 1.0f
 	};
 
 	unsigned int cube_00_indices[] = {
@@ -139,16 +138,16 @@ int main() {
 
 	glBindVertexArray(cube_00_VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, cube_00_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_00_vertices), cube_00_vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_00_EBO);
 
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_00_EBO);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_00_indices), cube_00_indices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_00_vertices), cube_00_vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_00_indices), cube_00_indices, GL_STATIC_DRAW);
 
 	// Position vertex attribute.
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	// Color vertex attribute.
+	// Normal vertex attribute.
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
@@ -168,17 +167,22 @@ int main() {
 
 	glBindVertexArray(light_cube_00_VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, light_cube_00_VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, light_cube_00_EBO);
+
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_00_vertices), cube_00_vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_00_indices), cube_00_indices, GL_STATIC_DRAW);
 
 	// Position vertex attribute.
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	// ========== END LIGHT CUBE ==========
 
+	// ========== BEGIN TEXTURE SETUP ==========
 	unsigned int texture_00, texture_01;
 	glGenTextures(1, &texture_00);
 	glGenTextures(1, &texture_01);
 
+	// Setup texture 0.
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_00);
 
@@ -203,6 +207,7 @@ int main() {
 	}
 	stbi_image_free(data);
 
+	// Setup texture 1.
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, texture_01);
 
@@ -225,14 +230,11 @@ int main() {
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data);
-
-	// Always activate the shader before setting the uniforms.  
-	cubeColorShaderProgram.use();
-	glUniform1i(glGetUniformLocation(cubeColorShaderProgram.ID, "texture_00"), 0); // Set the texture uniform manually.
-	//cubeColorShaderProgram.setInt("texture_0", 1); // Set the texture uniform using the shader class.
+	// ========== END TEXTURE SETUP ==========
 
 	// Draw in wireframe mode.
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	glEnable(GL_DEPTH_TEST);
 
 	glm::vec3 cubePositions[] = {
@@ -248,7 +250,7 @@ int main() {
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	// render loop
+	// ========== BEGIN RENDER LOOP ==========
 	while (!glfwWindowShouldClose(window))
 	{
 		// Timing.
@@ -259,33 +261,42 @@ int main() {
 		// Input.
 		processInput(window);
 
-		// Render.
+		// General render operations.
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Render generic cubes.
+		// ========== BEGIN RENDER GENERIC CUBES ==========
+		// Always activate the shader before setting the uniforms.  
 		cubeColorShaderProgram.use();
 
+		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
-		glm::mat4 model = glm::mat4(1.0f);
 
+		glUniform1i(glGetUniformLocation(cubeColorShaderProgram.ID, "texture_00"), 0.0f); // Set the texture uniform manually.
+		//cubeColorShaderProgram.setInt("texture_0", 1); // Set the texture uniform using the shader class.
+		glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
+		// Set shader uniform values, CPU -> GPU.
 		cubeColorShaderProgram.setFloat("mixerValue", mixerValue);
-		cubeColorShaderProgram.setFloat("texCoordScale", 1.0f);
+		cubeColorShaderProgram.setFloat("textureCoordinateScale", 1.0f);
 		cubeColorShaderProgram.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		cubeColorShaderProgram.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		cubeColorShaderProgram.setVec3("lightPosition", lightPosition);
+		cubeColorShaderProgram.setVec3("viewPosition", camera.Position);
 
+		// Position, normals and UVs.
 		glBindVertexArray(cube_00_VAO);
 
+		// Generate random cubes within the scene.
 		for (unsigned int i = 0; i < 10; i++)
 		{
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
-			if (i == 0 || i % 3 == 0) 
+			if (i == 0 || i % 2 == 0) 
 			{
 				model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			}
@@ -299,22 +310,28 @@ int main() {
 		}
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		// ========== BEGIN RENDER LIGHT CUBE ==========
 		lightCubeColorShaderProgram.use();
-		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(1.2f, 1.0f, 2.0f));
 		model = glm::scale(model, glm::vec3(0.2f));
 		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
 		glBindVertexArray(light_cube_00_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+		// ========== END RENDER LIGHT CUBE ==========
+
+		// ========== END RENDER GENERIC CUBES ==========
 
 		// GLFW: Swap buffers and poll IO events.
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	// (optional) de-allocate all resources once they've outlived their purpose
+	// De-allocate all resources.
 	glDeleteVertexArrays(1, &cube_00_VAO);
 	glDeleteBuffers(1, &cube_00_VBO);
 	glDeleteBuffers(1, &cube_00_EBO);
@@ -323,9 +340,11 @@ int main() {
 	glDeleteBuffers(1, &light_cube_00_VBO);
 	glDeleteBuffers(1, &light_cube_00_EBO);
 
-	// GLFW: terminate, clearing all previously allocated resources
+	// GLFW: clear all previously allocated resources.
 	glfwTerminate();
 	return 0;
+
+	// ========== END RENDER LOOP ==========
 }
 
 // Process input each frame (keys pressed, released, etc.).
@@ -364,12 +383,13 @@ void processInput(GLFWwindow* window)
 
 }
 
-// GLFW: Whenever the window size changes, execute this.
+// GLFW: whenever the window size changes.
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
 
+// GLFW: whenever the mouse moves.
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
@@ -385,6 +405,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
+// GLFW: whenever the mouse scrolls.
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll(yoffset);
