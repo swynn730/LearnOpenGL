@@ -33,10 +33,15 @@ float deltaTime = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
 // Lighting.
-glm::vec3 lightPosition = glm::vec3(1.2f, 1.0, 2.0f);
+glm::vec3 lightPosition = glm::vec3(1.2f, 1.0f, 2.0f);
 
 // Material.
 float mixerValue = 0.0;
+
+float generate_normalized_random_float()
+{
+	return (float)(rand()) / (float)(RAND_MAX);
+}
 
 int main() {
 	// GLFW: initialize and configure
@@ -250,6 +255,19 @@ int main() {
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	glm::vec3 cubeColors[] = {
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float()),
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float()),
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float()),
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float()),
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float()),
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float()),
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float()),
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float()),
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float()),
+	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float())
+	};
+
 	// ========== BEGIN RENDER LOOP ==========
 	while (!glfwWindowShouldClose(window))
 	{
@@ -265,13 +283,13 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// ========== BEGIN RENDER GENERIC CUBES ==========
-		// Always activate the shader before setting the uniforms.  
-		cubeColorShaderProgram.use();
-
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+		
+		// ========== BEGIN RENDER GENERIC CUBES ==========
+		// Always activate the shader before setting the uniforms.  
+		cubeColorShaderProgram.use();
 
 		glUniform1i(glGetUniformLocation(cubeColorShaderProgram.ID, "texture_00"), 0.0f); // Set the texture uniform manually.
 		//cubeColorShaderProgram.setInt("texture_0", 1); // Set the texture uniform using the shader class.
@@ -306,26 +324,37 @@ int main() {
 			}
 			glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
+			cubeColorShaderProgram.setVec3("objectColor", cubeColors[i]);
+
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		// ========== BEGIN RENDER LIGHT CUBE ==========
+		// ========== END RENDER GENERIC CUBES ==========
+
+				// ========== BEGIN RENDER LIGHT CUBE ==========
 		lightCubeColorShaderProgram.use();
 
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(1.2f, 1.0f, 2.0f));
 		model = glm::scale(model, glm::vec3(0.2f));
+
+		// Move (rotate) over time.
+		lightPosition.x = sin(glfwGetTime() * 0.5f) * 20.0f;
+		lightPosition.y = 0;
+		lightPosition.z = cos(glfwGetTime() * 0.5f) * 20.0f;
+		model = glm::translate(model, glm::vec3(lightPosition.x, lightPosition.y, lightPosition.z));
+
 		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
+		lightCubeColorShaderProgram.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+
 		glBindVertexArray(light_cube_00_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		// ========== END RENDER LIGHT CUBE ==========
-
-		// ========== END RENDER GENERIC CUBES ==========
-
+		
 		// GLFW: Swap buffers and poll IO events.
 		glfwSwapBuffers(window);
 		glfwPollEvents();
