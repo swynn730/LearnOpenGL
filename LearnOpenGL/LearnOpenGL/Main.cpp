@@ -34,6 +34,7 @@ float lastFrame = 0.0f; // Time of last frame
 
 // Lighting.
 glm::vec3 lightPosition = glm::vec3(1.2f, 1.0f, 2.0f);
+glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
 // Material.
 float mixerValue = 0.0;
@@ -268,6 +269,45 @@ int main() {
 	glm::vec3(generate_normalized_random_float(), generate_normalized_random_float(), generate_normalized_random_float())
 	};
 
+	struct Material 
+	{
+		std::string name;
+		glm::vec3 ambient;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
+		float shininess;
+	};
+
+	// http://devernay.free.fr/cours/opengl/materials.html
+	Material cubeMaterials[24] = 
+	{
+		{"emerald", glm::vec3(0.0215f, 0.1745f, 0.0215f), glm::vec3(0.07568f, 0.61424f, 0.07568f), glm::vec3(0.633f, 0.727811f, 0.633f), 0.6f},
+		{"jade", glm::vec3(0.135f, 0.2225f, 0.1575f), glm::vec3(0.54f, 0.89f, 0.63f), glm::vec3(0.316228f, 0.316228f, 0.316228f), 0.1f},
+		{"obsidian", glm::vec3(0.05375f, 0.05f, 0.06625f), glm::vec3(0.18275f, 0.17f, 0.22525f), glm::vec3(0.332741f, 0.328634f, 0.346435f), 0.3f},
+		{"pearl", glm::vec3(0.25f, 0.20725f, 0.20725f), glm::vec3(1.0f, 0.829f, 0.829f), glm::vec3(0.296648f, 0.296648f, 0.296648f), 0.088f},
+		{"ruby", glm::vec3(0.1745f, 0.01175f, 0.01175f), glm::vec3(0.61424f, 0.04136f, 0.04136f), glm::vec3(0.727811f, 0.626959f, 0.626959f), 0.6f},
+		{"turquoise", glm::vec3(0.1f, 0.18725f, 0.1745f), glm::vec3(0.396f, 0.74151f, 0.69102f), glm::vec3(0.297254f, 0.30829f, 0.306678f), 0.1f},
+		{"brass", glm::vec3(0.329412f, 0.223529f, 0.027451f), glm::vec3(0.780392f, 0.568627f, 0.113725f), glm::vec3(0.992157f, 0.941176f, 0.807843f), 0.21794872f},
+		{"bronze", glm::vec3(0.2125f, 0.1275f, 0.054f), glm::vec3(0.714f, 0.4284f, 0.18144f), glm::vec3(0.393548f, 0.271906f, 0.166721f), 0.2f},
+		{"chrome", glm::vec3(0.25f, 0.25f, 0.25f), glm::vec3(0.4f, 0.4f, 0.4f), glm::vec3(0.774597f, 0.774597f, 0.774597f), 0.6f},
+		{"copper", glm::vec3(0.19125f, 0.0735f, 0.0225f), glm::vec3(0.7038f, 0.27048f, 0.0828f), glm::vec3(0.256777f, 0.137622f, 0.086014f), 0.1f},
+		{"gold", glm::vec3(0.24725f, 0.1995f, 0.0745f), glm::vec3(0.75164f, 0.60648f, 0.22648f), glm::vec3(0.628281f, 0.555802f, 0.366065f), 0.4f},
+		{"silver", glm::vec3(0.19225f, 0.19225f, 0.19225f), glm::vec3(0.50754f, 0.50754f, 0.50754f), glm::vec3(0.508273f, 0.508273f, 0.508273f), 0.4f},
+		{"black plastic", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.50f, 0.50f, 0.50f), .25f},
+		{"cyan plastic", glm::vec3(0.0f, 0.1f, 0.06f), glm::vec3(0.0f, 0.50980392f, 0.50980392f), glm::vec3(0.50196078f, 0.50196078f, 0.50196078f), .25f},
+		{"green plastic", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.35f, 0.1f), glm::vec3(0.45f, 0.55f, 0.45f), .25f},
+		{"red plastic", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.7f, 0.6f, 0.6f), .25f},
+		{"white plastic", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.55f, 0.55f, 0.55f), glm::vec3(0.70f, 0.70f, 0.70f), .25f},
+		{"yellow plastic", glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.60f, 0.60f, 0.50f), .25f},
+		{"black rubber", glm::vec3(0.02f, 0.02f, 0.02f), glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(0.4f, 0.4f, 0.4f), .078125f},
+		{"cyan rubber", glm::vec3(0.0f, 0.05f, 0.05f), glm::vec3(0.4f, 0.5f, 0.5f), glm::vec3(0.04f, 0.7f, 0.7f), .078125f},
+		{"green rubber", glm::vec3(0.0f, 0.05f, 0.0f), glm::vec3(0.4f, 0.5f, 0.4f), glm::vec3(0.04f, 0.7f, 0.04f), .078125f},
+		{"red rubber", glm::vec3(0.05f, 0.0f, 0.0f), glm::vec3(0.5f, 0.4f, 0.4f), glm::vec3(0.7f, 0.04f, 0.04f), .078125f},
+		{"white rubber", glm::vec3(0.05f, 0.05f, 0.05f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.7f, 0.7f, 0.7f), .078125f},
+		{"yellow rubber", glm::vec3(0.05f, 0.05f, 0.0f), glm::vec3(0.5f, 0.5f, 0.4f), glm::vec3(0.7f, 0.7f, 0.04f), .078125f}
+	};
+
+
 	// ========== BEGIN RENDER LOOP ==========
 	while (!glfwWindowShouldClose(window))
 	{
@@ -287,6 +327,16 @@ int main() {
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
 		
+		// Move (rotate) light over time.
+		lightPosition.x = sin(glfwGetTime() * 0.35f) * 35.0f;
+		lightPosition.y = 0;
+		lightPosition.z = cos(glfwGetTime() * 0.35f) * 35.0f;
+
+		// Change color of light over time.
+		//lightColor.x = sin(glfwGetTime() * 1.0f);
+		//lightColor.y = sin(glfwGetTime() * 0.35f);
+		//lightColor.z = sin(glfwGetTime() * 0.65f);
+
 		// ========== BEGIN RENDER GENERIC CUBES ==========
 		// Always activate the shader before setting the uniforms.  
 		cubeColorShaderProgram.use();
@@ -297,13 +347,24 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-		// Set shader uniform values, CPU -> GPU.
-		cubeColorShaderProgram.setFloat("mixerValue", mixerValue);
+		// Default (static) cube parameters.
 		cubeColorShaderProgram.setFloat("textureCoordinateScale", 1.0f);
-		cubeColorShaderProgram.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		cubeColorShaderProgram.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		cubeColorShaderProgram.setVec3("lightPosition", lightPosition);
+		cubeColorShaderProgram.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+		cubeColorShaderProgram.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+		cubeColorShaderProgram.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		cubeColorShaderProgram.setFloat("material.shininess", 256.0f);
+		//cubeColorShaderProgram.setVec3("light.ambientStrength", 1.0f, 0.2f, 0.2f);
+		//cubeColorShaderProgram.setVec3("light.diffuseStrength", 0.5f, 0.5f, 0.5f);
+		//cubeColorShaderProgram.setVec3("light.specularStrength", 1.0f, 1.0f, 1.0f);
+		cubeColorShaderProgram.setVec3("light.ambientStrength", 1.0f, 1.0f, 1.0f);
+		cubeColorShaderProgram.setVec3("light.diffuseStrength", 1.0f, 1.0f, 1.0f);
+		cubeColorShaderProgram.setVec3("light.specularStrength", 1.0f, 1.0f, 1.0f);
+
+		// Variable (dynamic) cube parameters.
+		cubeColorShaderProgram.setFloat("mixerValue", mixerValue);
 		cubeColorShaderProgram.setVec3("viewPosition", camera.Position);
+		cubeColorShaderProgram.setVec3("lightPosition", lightPosition);
+		cubeColorShaderProgram.setVec3("lightColor", lightColor);
 
 		// Position, normals and UVs.
 		glBindVertexArray(cube_00_VAO);
@@ -314,9 +375,10 @@ int main() {
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
+			float rotationSpeed = 0.25f;
 			if (i == 0 || i % 2 == 0) 
 			{
-				model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+				model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle) * rotationSpeed, glm::vec3(1.0f, 0.3f, 0.5f));
 			}
 			else 
 			{
@@ -324,7 +386,11 @@ int main() {
 			}
 			glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
-			cubeColorShaderProgram.setVec3("objectColor", cubeColors[i]);
+			// Variable (dynamic) cube parameters.
+			cubeColorShaderProgram.setVec3("material.ambient", cubeMaterials[i].ambient);
+			cubeColorShaderProgram.setVec3("material.diffuse", cubeMaterials[i].diffuse);
+			cubeColorShaderProgram.setVec3("material.specular", cubeMaterials[i].specular);
+			cubeColorShaderProgram.setFloat("material.shininess", cubeMaterials[i].shininess * 256.0f);
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
@@ -338,18 +404,14 @@ int main() {
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(1.2f, 1.0f, 2.0f));
 		model = glm::scale(model, glm::vec3(0.2f));
-
-		// Move (rotate) over time.
-		lightPosition.x = sin(glfwGetTime() * 0.5f) * 20.0f;
-		lightPosition.y = 0;
-		lightPosition.z = cos(glfwGetTime() * 0.5f) * 20.0f;
 		model = glm::translate(model, glm::vec3(lightPosition.x, lightPosition.y, lightPosition.z));
 
 		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(lightCubeColorShaderProgram.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-		lightCubeColorShaderProgram.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		// Variable (dynamic) light parameters.
+		lightCubeColorShaderProgram.setVec3("lightColor", lightColor);
 
 		glBindVertexArray(light_cube_00_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
