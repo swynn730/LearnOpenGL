@@ -184,9 +184,11 @@ int main() {
 	// ========== END LIGHT CUBE ==========
 
 	// ========== BEGIN TEXTURE SETUP ==========
-	unsigned int texture_00, texture_01;
+	unsigned int texture_00, texture_01, texture_02, texture_03;
 	glGenTextures(1, &texture_00);
 	glGenTextures(1, &texture_01);
+	glGenTextures(1, &texture_02);
+	glGenTextures(1, &texture_03);
 
 	// Setup texture 0.
 	glActiveTexture(GL_TEXTURE0);
@@ -195,13 +197,13 @@ int main() {
 	// Set the texture wrapping/filtering options (on the currently bound texture object).
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Load and generate the texture.
 	int width, height, nrChannels;
-	unsigned char* data = stbi_load("Resources/Textures/awesomeface.png", &width, &height, &nrChannels, 0);
-	stbi_set_flip_vertically_on_load(true);
+	unsigned char* data = stbi_load("Resources/Textures/woodenAndSteelContainer.png", &width, &height, &nrChannels, 0);
+	stbi_set_flip_vertically_on_load(false);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -220,15 +222,63 @@ int main() {
 	// Set the texture wrapping/filtering options (on the currently bound texture object).
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Load and generate the texture.
-	data = stbi_load("Resources/Textures/judge_judy.jpg", &width, &height, &nrChannels, 0);
+	data = stbi_load("Resources/Textures/woodenAndSteelContainer_specular.png", &width, &height, &nrChannels, 0);
+	stbi_set_flip_vertically_on_load(false);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
+	// Setup texture 2.
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, texture_02);
+
+	// Set the texture wrapping/filtering options (on the currently bound texture object).
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Load and generate the texture.
+	data = stbi_load("Resources/Textures/matrix.jpg", &width, &height, &nrChannels, 0);
 	stbi_set_flip_vertically_on_load(false);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
+	// Setup texture 3.
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, texture_03);
+
+	// Set the texture wrapping/filtering options (on the currently bound texture object).
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Load and generate the texture.
+	data = stbi_load("Resources/Textures/woodenAndSteelContainer_mask.png", &width, &height, &nrChannels, 0);
+	stbi_set_flip_vertically_on_load(false);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -272,9 +322,9 @@ int main() {
 	struct Material 
 	{
 		std::string name;
-		glm::vec3 ambient;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
+		glm::vec3 ambient; // NOTE: No longer used at the moment.
+		glm::vec3 diffuse; // NOTE: No longer used at the moment.
+		glm::vec3 specular; // NOTE: No longer used at the moment.
 		float shininess;
 	};
 
@@ -320,7 +370,7 @@ int main() {
 		processInput(window);
 
 		// General render operations.
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.05f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 model = glm::mat4(1.0f);
@@ -341,7 +391,8 @@ int main() {
 		// Always activate the shader before setting the uniforms.  
 		cubeColorShaderProgram.use();
 
-		glUniform1i(glGetUniformLocation(cubeColorShaderProgram.ID, "texture_00"), 0.0f); // Set the texture uniform manually.
+		//glUniform1i(glGetUniformLocation(cubeColorShaderProgram.ID, "texture_00"), 0.0f); // Set the texture uniform manually.
+		//glUniform1i(glGetUniformLocation(cubeColorShaderProgram.ID, "texture_01"), 1.0f); // Set the texture uniform manually.
 		//cubeColorShaderProgram.setInt("texture_0", 1); // Set the texture uniform using the shader class.
 		glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -349,16 +400,18 @@ int main() {
 
 		// Default (static) cube parameters.
 		cubeColorShaderProgram.setFloat("textureCoordinateScale", 1.0f);
-		cubeColorShaderProgram.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-		cubeColorShaderProgram.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-		cubeColorShaderProgram.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-		cubeColorShaderProgram.setFloat("material.shininess", 256.0f);
-		//cubeColorShaderProgram.setVec3("light.ambientStrength", 1.0f, 0.2f, 0.2f);
-		//cubeColorShaderProgram.setVec3("light.diffuseStrength", 0.5f, 0.5f, 0.5f);
-		//cubeColorShaderProgram.setVec3("light.specularStrength", 1.0f, 1.0f, 1.0f);
-		cubeColorShaderProgram.setVec3("light.ambientStrength", 1.0f, 1.0f, 1.0f);
-		cubeColorShaderProgram.setVec3("light.diffuseStrength", 1.0f, 1.0f, 1.0f);
-		cubeColorShaderProgram.setVec3("light.specularStrength", 1.0f, 1.0f, 1.0f);
+		cubeColorShaderProgram.setInt("material.diffuse", 0);
+		cubeColorShaderProgram.setVec3("material.tint", 1.0f, 1.0f, 1.0f);
+		cubeColorShaderProgram.setInt("material.specular", 1);
+		cubeColorShaderProgram.setFloat("material.shininess", 32.0f);
+		cubeColorShaderProgram.setInt("material.emissive", 2);
+		cubeColorShaderProgram.setFloat("material.emissiveStrength", 1.0f);
+		cubeColorShaderProgram.setInt("material.mask", 3);
+
+		// Default (static) light parameters.
+		cubeColorShaderProgram.setFloat("light.ambientStrength", 0.18f);
+		cubeColorShaderProgram.setFloat("light.diffuseStrength", 1.25f);
+		cubeColorShaderProgram.setFloat("light.specularStrength", 1.0f);
 
 		// Variable (dynamic) cube parameters.
 		cubeColorShaderProgram.setFloat("mixerValue", mixerValue);
@@ -387,10 +440,8 @@ int main() {
 			glUniformMatrix4fv(glGetUniformLocation(cubeColorShaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 			// Variable (dynamic) cube parameters.
-			cubeColorShaderProgram.setVec3("material.ambient", cubeMaterials[i].ambient);
-			cubeColorShaderProgram.setVec3("material.diffuse", cubeMaterials[i].diffuse);
-			cubeColorShaderProgram.setVec3("material.specular", cubeMaterials[i].specular);
-			cubeColorShaderProgram.setFloat("material.shininess", cubeMaterials[i].shininess * 256.0f);
+			cubeColorShaderProgram.setVec3("material.tint", cubeMaterials[i].diffuse);
+			//cubeColorShaderProgram.setFloat("material.shininess", cubeMaterials[i].shininess * 256.0f);
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
